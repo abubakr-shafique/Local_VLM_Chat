@@ -1,12 +1,12 @@
 """Registry of supported open-source models and local storage layout.
 
 Add new models by adding an entry to MODEL_REGISTRY:
-  - repo_id:        Hugging Face repo id (weights are downloaded from here)
-  - kind:           "vlm" (vision-language, accepts images) or "llm" (text only)
-  - category:       "vision" | "text" | "coding"  (display grouping in the UI)
-  - vram_4bit_gb:   rough VRAM estimate at 4-bit quantization (for the UI)
-  - gated:          True if the HF repo requires accepting a license + token
-  - notes:          short description shown in docs
+- repo_id: Hugging Face repo id (weights are downloaded from here)
+- kind: "vlm" (vision-language, accepts images) or "llm" (text only)
+- category: "vision" | "text" | "coding" (display grouping in the UI)
+- vram_4bit_gb: rough VRAM estimate at 4-bit quantization (for the UI)
+- gated: True if the HF repo requires accepting a license + token
+- notes: short description shown in docs
 """
 import os
 from pathlib import Path
@@ -95,7 +95,7 @@ MODEL_REGISTRY = {
         "category": "text",
         "vram_4bit_gb": 9.5,
         "gated": False,
-        "notes": "Hybrid reasoning model — streams its <think> block before the answer.",
+        "notes": "Hybrid reasoning model — streams its block before the answer.",
     },
     "Qwen3-8B": {
         "repo_id": "Qwen/Qwen3-8B",
@@ -166,3 +166,19 @@ MODEL_REGISTRY = {
 }
 
 DEFAULT_MODEL = "Qwen3.5-9B"
+
+
+def is_vision_model(model_key: str) -> bool:
+    """Return True if the model supports vision (image) input."""
+    cfg = MODEL_REGISTRY.get(model_key)
+    if cfg is None:
+        return False
+    return cfg.get("kind") == "vlm"
+
+
+def get_model_kind(model_key: str) -> str:
+    """Return 'vlm' or 'llm' for the given model key."""
+    cfg = MODEL_REGISTRY.get(model_key)
+    if cfg is None:
+        return "unknown"
+    return cfg.get("kind", "unknown")
