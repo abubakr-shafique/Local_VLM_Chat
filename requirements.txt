@@ -1,4 +1,5 @@
 # Core ML stack — install torch with CUDA support FIRST (see README.md)
+# NOTE: Qwen3.5 models require a recent transformers — run: pip install -U transformers
 torch>=2.4.0
 transformers>=4.51.0
 accelerate>=1.5.0

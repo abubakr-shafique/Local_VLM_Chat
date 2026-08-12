@@ -17,6 +17,7 @@ CHATS_DIR = Path(__file__).parent / "chats"
 CHATS_DIR.mkdir(exist_ok=True)
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif"}
+CATEGORY_LABELS = {"vision": "VLM 🖼️", "text": "LLM 📝", "coding": "Coding 💻"}
 
 
 # --------------------------------------------------------------------- helpers
@@ -24,8 +25,8 @@ def model_status_markdown():
     lines = []
     for key, cfg in MODEL_REGISTRY.items():
         state = "✅ downloaded" if manager.is_downloaded(key) else "⬇️ not downloaded"
-        kind = "VLM 🖼️" if cfg["kind"] == "vlm" else "LLM 📝"
-        lines.append(f"- **{key}** ({kind}, ~{cfg['vram_4bit_gb']} GB VRAM @ 4-bit) — {state}")
+        tag = CATEGORY_LABELS.get(cfg.get("category", cfg["kind"]), cfg["kind"])
+        lines.append(f"- **{key}** ({tag}, ~{cfg['vram_4bit_gb']} GB VRAM @ 4-bit) — {state}")
     return "\n".join(lines)
 
 
@@ -148,7 +149,7 @@ def build_app():
         gr.Markdown(
             "# 🖼️ Local Multimodal Chatbot\n"
             "Fully local inference with PyTorch + Hugging Face Transformers — chat with "
-            "text-only LLMs or vision-language models (VLMs) from locally stored weights."
+            "vision-language, text, and coding models from locally stored weights."
         )
 
         with gr.Row():
@@ -179,8 +180,10 @@ def build_app():
 
         chatbot = gr.Chatbot(type="messages", multimodal=True, height=480, label="Conversation")
         chat_input = gr.MultimodalTextbox(
-            placeholder="Type a message and/or attach an image…",
-            file_types=["image"], sources=["upload", "clipboard"],
+            placeholder="Type a message, attach an image (📎), or paste one from your clipboard…",
+            file_types=["image"],
+            sources=["upload"],  # only "upload" and "microphone" are valid; Ctrl+V paste works natively
+            file_count="multiple",
             label="Your message",
         )
         with gr.Row():
