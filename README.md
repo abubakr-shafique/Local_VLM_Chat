@@ -25,9 +25,9 @@ Designed for **32 GB RAM + 16 GB VRAM** (e.g., RTX 4060 Ti 16 GB / 4080 / 5080 c
 
 | Model | ~VRAM @ 4-bit | Notes |
 |---|---|---|
-| **Qwen3.5-9B** | ~6 GB | **Default.** Newest gen, natively multimodal, 262k context, Apache 2.0 |
+| Qwen3.5-9B | ~6 GB | **Default.** Newest gen, natively multimodal, 262k context, Apache 2.0 |
 | Qwen3.5-4B | ~3.5 GB | Fastest new-gen VLM |
-| **DeepSeek-VL2-Tiny** | ~3 GB | MoE VLM (1B active) — strong OCR/chart understanding, runs fully on 16 GB |
+| DeepSeek-VL2-Tiny | ~3 GB | MoE VLM (1B active) — strong OCR/chart understanding, runs fully on 16 GB |
 | DeepSeek-VL2-Small | ~10 GB | MoE VLM (2.8B active) — higher quality, still fits at 4-bit |
 | Qwen2.5-VL-7B-Instruct | ~6.5 GB | Proven; excellent OCR/document understanding |
 | Qwen2.5-VL-3B-Instruct | ~3.5 GB | Lightweight image Q&A |
