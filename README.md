@@ -27,6 +27,8 @@ Designed for **32 GB RAM + 16 GB VRAM** (e.g., RTX 4060 Ti 16 GB / 4080 / 5080 c
 |---|---|---|
 | **Qwen3.5-9B** | ~6 GB | **Default.** Newest gen, natively multimodal, 262k context, Apache 2.0 |
 | Qwen3.5-4B | ~3.5 GB | Fastest new-gen VLM |
+| **DeepSeek-VL2-Tiny** | ~3 GB | MoE VLM (1B active) — strong OCR/chart understanding, runs fully on 16 GB |
+| DeepSeek-VL2-Small | ~10 GB | MoE VLM (2.8B active) — higher quality, still fits at 4-bit |
 | Qwen2.5-VL-7B-Instruct | ~6.5 GB | Proven; excellent OCR/document understanding |
 | Qwen2.5-VL-3B-Instruct | ~3.5 GB | Lightweight image Q&A |
 | Gemma-3-4B-it | ~4.5 GB | 128k context (gated) |
@@ -69,10 +71,13 @@ conda create --name local_VLM python=3.10
 conda activate local_VLM       # Windows
 
 # 2. Install PyTorch with CUDA (pick the wheel matching your driver)
-pip install torch --index-url https://download.pytorch.org/whl/cu124
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 
 # 3. Install the rest
 pip install -r requirements.txt
+
+# 4. Qwen3.5 models need a recent transformers — make sure you're up to date
+pip install -U transformers
 ```
 
 ## Downloading model weights

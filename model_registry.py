@@ -32,6 +32,22 @@ MODEL_REGISTRY = {
         "gated": False,
         "notes": "Smallest practical Qwen3.5 — natively multimodal and very fast.",
     },
+    "DeepSeek-VL2-Tiny": {
+        "repo_id": "deepseek-ai/deepseek-vl2-tiny",
+        "kind": "vlm",
+        "category": "vision",
+        "vram_4bit_gb": 3.0,
+        "gated": False,
+        "notes": "MoE VLM (1B active params) — runs fully on 16GB, strong OCR/chart understanding.",
+    },
+    "DeepSeek-VL2-Small": {
+        "repo_id": "deepseek-ai/deepseek-vl2-small",
+        "kind": "vlm",
+        "category": "vision",
+        "vram_4bit_gb": 10.0,
+        "gated": False,
+        "notes": "MoE VLM (2.8B active) — better quality than Tiny; fits at 4-bit with headroom.",
+    },
     "Qwen2.5-VL-7B-Instruct": {
         "repo_id": "Qwen/Qwen2.5-VL-7B-Instruct",
         "kind": "vlm",
