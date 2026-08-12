@@ -43,7 +43,7 @@ conda create --name local_VLM python=3.10
 conda activate local_VLM       # Windows
 
 # 2. Install PyTorch with CUDA (pick the wheel matching your driver)
-pip install torch --index-url https://download.pytorch.org/whl/cu126
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 
 # 3. Install the rest
 pip install -r requirements.txt
