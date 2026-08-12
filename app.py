@@ -1,6 +1,8 @@
 """Local multimodal chatbot — Gradio GUI.
 
 Run:  python app.py   →  http://127.0.0.1:7860
+
+Requires Gradio 6.x (messages format is default; no `type` or `multimodal` args).
 """
 import datetime
 import json
@@ -44,6 +46,7 @@ def history_to_messages(history, allow_images):
                 messages.append({"role": "assistant", "content": text})
             continue
 
+        # User message: can be text, dict with image path, or a list of blocks
         if isinstance(content, str):
             block = {"type": "text", "text": content}
         elif isinstance(content, dict) and "path" in content:
@@ -55,8 +58,25 @@ def history_to_messages(history, allow_images):
                     block = {"type": "text", "text": "[image omitted — text-only model loaded]"}
             else:
                 block = {"type": "text", "text": f"[attached file: {Path(path).name}]"}
+        elif isinstance(content, list):
+            # Already a list of blocks (rare, but handle it)
+            block_list = []
+            for b in content:
+                if isinstance(b, dict) and b.get("type") == "image" and "image" in b:
+                    if allow_images:
+                        block_list.append(b)
+                    else:
+                        block_list.append({"type": "text", "text": "[image omitted]"})
+                elif isinstance(b, dict) and b.get("type") == "text" and "text" in b:
+                    block_list.append(b)
+            if block_list:
+                messages.append({"role": "user", "content": block_list})
+                continue
+            else:
+                # Fallback if list is empty/malformed
+                block = {"type": "text", "text": ""}
         else:
-            continue
+            block = {"type": "text", "text": ""}
 
         if messages and messages[-1]["role"] == "user" and isinstance(messages[-1]["content"], list):
             messages[-1]["content"].append(block)
@@ -87,6 +107,7 @@ def ui_unload_model():
 
 
 def add_message(history, message):
+    # message is a dict: {"text": str or None, "files": list of paths}
     for path in message.get("files", []):
         history.append({"role": "user", "content": {"path": path}})
     text = (message.get("text") or "").strip()
@@ -97,9 +118,11 @@ def add_message(history, message):
 
 def bot_response(history, system_prompt, max_new_tokens, temperature, top_p, top_k,
                  repetition_penalty):
+    # Ensure there is a user message to respond to
     if not history or history[-1]["role"] != "user":
         yield history
         return
+
     if manager.model is None:
         history.append({
             "role": "assistant",
@@ -110,6 +133,12 @@ def bot_response(history, system_prompt, max_new_tokens, temperature, top_p, top
 
     allow_images = manager.kind == "vlm"
     messages = history_to_messages(history, allow_images)
+
+    # Debug: show what we're sending (first 200 chars)
+    # print("=== Messages sent to model ===")
+    # for m in messages[-3:]:
+    #     print(m["role"], repr(str(m["content"])[:200]))
+
     if system_prompt and system_prompt.strip():
         messages.insert(0, {"role": "system", "content": system_prompt.strip()})
     images = extract_images(messages)
@@ -178,7 +207,8 @@ def build_app():
                 rep_pen_sl = gr.Slider(1.0, 2.0, value=1.05, step=0.05,
                                        label="Repetition penalty")
 
-        chatbot = gr.Chatbot(type="messages", multimodal=True, height=480, label="Conversation")
+        # Gradio 6.x: Chatbot is multimodal by default; no `type` or `multimodal` args
+        chatbot = gr.Chatbot(height=480, label="Conversation")
         chat_input = gr.MultimodalTextbox(
             placeholder="Type a message, attach an image (📎), or paste one from your clipboard…",
             file_types=["image"],
