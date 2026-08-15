@@ -59,7 +59,7 @@ Python 3.10–3.12 recommended. Linux (or WSL2 on Windows) gives the smoothest e
 
 ```bash
 # 1. Create an environment
-conda create --name local_VLM python=3.10
+conda create --name local_VLM python=3.12
 conda activate local_VLM       # Windows
 
 # 2. Install PyTorch with CUDA (pick the wheel matching your driver)
